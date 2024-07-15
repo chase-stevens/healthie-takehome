@@ -1,0 +1,59 @@
+Database and model design with queries
+We want to model providers (e.g. dietitians), their clients, and journal entries.
+● Both providers and clients have a name and an email address.
+● Providers have many clients
+● Clients usually have one Provider but can have more than one.
+● Clients have a plan that they paid for, signified by the string "basic" or "premium".
+For each provider that a client is signed up with, they have 1 plan.
+● Clients post journal entries. These consist of freeform text.
+We want to be able to do these queries:
+● Find all clients for a particular provider
+● Find all providers for a particular client
+● Find all of a particular client's journal entries, sorted by date posted
+● Find all of the journal entries of all of the clients of a particular provider, sorted by
+date posted
+Using ActiveRecord, Django, or another system you enjoy using, create the classes and
+schema migrations for this, including indexes.
+Show how to do each of the queries listed above.
+If you are torn between multiple approaches, just choose one to implement and explain
+the other approach and what the pros and cons of each might be.
+
+
+##### Models -- dont forget indexes
+
+provider <> client many to many
+
+providers
+name string
+email string
+
+clients
+provider_ids int[] foreign_key # (has many)
+name string
+email_address string
+
+plan
+client_id int foreign_key
+provider_id int foreign_key
+tier string
+
+journal_entries
+client_id int foreign_key
+created_at datetime
+updated_at datetime
+
+##### queries
+
+● Find all clients for a particular provider
+Provider.find(provider_id).clients
+
+● Find all providers for a particular client
+Client.find(client_id).providers
+
+● Find all of a particular client's journal entries, sorted by date posted
+Client.find(client_id).journal_entries.order(:created_at)
+
+● Find all of the journal entries of all of the clients of a particular provider, sorted by
+date posted
+idk somethingn with a joins
+Journal_entries.joins(:clients).where(client: {provider_id: id})

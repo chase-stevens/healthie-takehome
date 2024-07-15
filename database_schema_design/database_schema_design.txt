@@ -1,0 +1,68 @@
+Healthie is a platform which health and wellness providers use to provide services for
+their clients. We want to create a new feature which allows providers to create forms for
+their clients to fill out. Using a drag-and-drop interface, they can create a type of form
+which will then be filled out by multiple clients.
+We want to support these types of form elements:
+
+● text field
+● select fields
+● radio buttons
+● checkboxes
+
+Design the database schema you would use to implement this feature. The schema
+should support both
+● providers creating multiple types of forms which any client can fill out
+● clients filling out a form with answers
+
+#####
+# The forms_table is used to store records of each form.
+# The questions for the forms will have a foreign_key to point to the form they belong to.
+forms_table
+id int primary_key
+provider_id int foreign_key
+title string
+description string
+index provider_id
+
+# The questions table will store the questions for the form
+# It belongs to a form and will have a response_type that define how users can input their answer.
+questions_table
+id int primary_key
+form_id int foreign_key
+prompt string
+response_type enum [text_field, select_field, radio_buttons, check_boxes]
+index form_id
+
+# The values_table will store the possible values for selects, radios, and checkboxes
+values_table
+id int primary_key
+question_id int foreign_key
+value string
+index question_id
+
+# The client_response table will store the record of a client filling out a form.
+# Each client response record will organize each answer for the form.
+client_responses_table
+id int primary_key
+form_id int foreign_key
+client_id int foreign_key
+index form_id, client_id
+
+
+# The text_responses table will store responses to text field answers
+# They will point to a question and a specific client_response
+text_responses_table 
+id int primary_key
+question_id int foreign_key
+client_response_id int foreign_key
+text_input string
+index question_id
+index question_id, client_response_id
+
+# The selctable_responses_table will track answers for selects, radios, and checkboxes
+selectable_responses_table
+id int primary_key
+question_id int foreign_key
+value_id int foreign_key
+selected bool
+index question_id
